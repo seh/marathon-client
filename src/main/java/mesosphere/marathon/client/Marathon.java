@@ -2,7 +2,9 @@ package mesosphere.marathon.client;
 
 import java.util.List;
 
+import feign.Headers;
 import feign.Param;
+import feign.RequestLine;
 import mesosphere.marathon.client.model.v2.App;
 import mesosphere.marathon.client.model.v2.DeleteAppTaskResponse;
 import mesosphere.marathon.client.model.v2.DeleteAppTasksResponse;
@@ -16,8 +18,8 @@ import mesosphere.marathon.client.model.v2.Group;
 import mesosphere.marathon.client.model.v2.Result;
 import mesosphere.marathon.client.utils.AppIdNormalizer;
 import mesosphere.marathon.client.utils.MarathonException;
-import feign.RequestLine;
 
+@Headers("Accept: application/json")
 public interface Marathon {
     // Apps
 	@RequestLine("GET /v2/apps")
@@ -37,9 +39,11 @@ public interface Marathon {
 	@RequestLine("GET /v2/tasks")
 	GetTasksResponse getTasks();
 
+	@Headers("Content-Type: application/json")
 	@RequestLine("POST /v2/apps")
 	App createApp(App app) throws MarathonException;
 
+	@Headers("Content-Type: application/json")
 	@RequestLine("PUT /v2/apps/{app_id}?force={force}")
 	void updateApp(@Param(value = "app_id", expander = AppIdNormalizer.class) String appId, App app,
                    @Param("force") boolean force) throws MarathonException;
@@ -60,9 +64,11 @@ public interface Marathon {
 			@Param("task_id") String taskId, @Param("scale") String scale);
 
     // Groups
+	@Headers("Content-Type: application/json")
 	@RequestLine("POST /v2/groups")
 	Result createGroup(Group group) throws MarathonException;
 
+	@Headers("Content-Type: application/json")
 	@RequestLine("PUT /v2/groups/{id}")
 	Result updateGroup(@Param("id") String id, Group group, @Param("force") boolean force,
 			@Param("dryRun") boolean dryRun) throws MarathonException;
@@ -78,10 +84,10 @@ public interface Marathon {
     // Deployments
 	@RequestLine("GET /v2/deployments")
 	List<Deployment> getDeployments();
-	
+
 	@RequestLine("DELETE /v2/deployments/{deploymentId}")
 	void cancelDeploymentAndRollback(@Param("deploymentId") String id);
-	
+
 	@RequestLine("DELETE /v2/deployments/{deploymentId}?force=true")
 	void cancelDeployment(@Param("deploymentId") String id);
 
