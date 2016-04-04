@@ -1,7 +1,7 @@
 package mesosphere.marathon.client;
 
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import feign.Headers;
 import feign.Param;
@@ -36,7 +36,7 @@ public interface Marathon {
 	GetAppsResponse filterApps(@Param("cmd") String commandSubstring,
 			@Param(value = "id", expander = AppIdNormalizer.class) String idSubstring,
 			@Param("labelSelector") String labelSelector,
-			@Param("embed") EnumSet<EmbeddedAppResource> embeddedResources);
+			@Param("embed") Set<EmbeddedAppResource> embeddedResources);
 
 	@RequestLine("GET /v2/apps/{id}")
 	GetAppResponse getApp(@Param(value = "id", expander = AppIdNormalizer.class) String id) throws MarathonException;
