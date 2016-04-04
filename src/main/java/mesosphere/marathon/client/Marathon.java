@@ -1,12 +1,15 @@
 package mesosphere.marathon.client;
 
 import java.util.List;
+import java.util.Set;
 
 import feign.Param;
+import feign.RequestLine;
 import mesosphere.marathon.client.model.v2.App;
 import mesosphere.marathon.client.model.v2.DeleteAppTaskResponse;
 import mesosphere.marathon.client.model.v2.DeleteAppTasksResponse;
 import mesosphere.marathon.client.model.v2.Deployment;
+import mesosphere.marathon.client.model.v2.EmbeddedAppResource;
 import mesosphere.marathon.client.model.v2.GetAppResponse;
 import mesosphere.marathon.client.model.v2.GetAppTasksResponse;
 import mesosphere.marathon.client.model.v2.GetAppsResponse;
@@ -16,7 +19,6 @@ import mesosphere.marathon.client.model.v2.Group;
 import mesosphere.marathon.client.model.v2.Result;
 import mesosphere.marathon.client.utils.AppIdNormalizer;
 import mesosphere.marathon.client.utils.MarathonException;
-import feign.RequestLine;
 
 public interface Marathon {
     // Apps
@@ -24,9 +26,15 @@ public interface Marathon {
 	GetAppsResponse getApps();
 
 	@RequestLine("GET /v2/apps?cmd={cmd}&id={id}&label={labelSelector}")
-	GetAppsResponse filterApps(@Param("cmd") String command,
-			@Param(value = "id", expander = AppIdNormalizer.class) String id,
+	GetAppsResponse filterApps(@Param("cmd") String commandSubstring,
+			@Param(value = "id", expander = AppIdNormalizer.class) String idSubstring,
 			@Param("labelSelector") String labelSelector);
+
+	@RequestLine("GET /v2/apps?cmd={cmd}&id={id}&label={labelSelector}&embed={embed}")
+	GetAppsResponse filterApps(@Param("cmd") String commandSubstring,
+			@Param(value = "id", expander = AppIdNormalizer.class) String idSubstring,
+			@Param("labelSelector") String labelSelector,
+			@Param("embed") Set<EmbeddedAppResource> embeddedResources);
 
 	@RequestLine("GET /v2/apps/{id}")
 	GetAppResponse getApp(@Param(value = "id", expander = AppIdNormalizer.class) String id) throws MarathonException;
